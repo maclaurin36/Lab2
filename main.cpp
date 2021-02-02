@@ -12,6 +12,7 @@ void OutputSetContents(const set<string> &unique, string fileName);
 void OutputVectorContents(const vector<string> &tokens, string fileName);
 void CreateMapFromVector(const vector<string> &tokens, map<string, string> &wordMap);
 void OutputMapContents(const map<string, string> &wordMap, string fileName);
+void PrintCyclicalSermon(const map<string, string> &wordMap);
 int main(int argc, char* argv[]) {
 	string fileName = argv[1];
 
@@ -26,6 +27,8 @@ int main(int argc, char* argv[]) {
 	map<string, string> wordMap;
 	CreateMapFromVector(tokens, wordMap);
 	OutputMapContents(wordMap, fileName);
+
+	PrintCyclicalSermon(wordMap);
 	return 0;
 }
 
@@ -72,7 +75,7 @@ void ReadInputAsVector(vector<string> &tokens, string fileName) {
 void OutputSetContents(const set<string> &unique, string fileName) {
 	ofstream setFile(fileName + "_set.txt");
 
-    for (set<string>::iterator it = unique.begin(); it != unique.end(); it++) {
+    for (set<string>::const_iterator it = unique.begin(); it != unique.end(); it++) {
 		setFile << *it << "\n";
 	}
 
@@ -88,7 +91,6 @@ void OutputVectorContents(const vector<string> &tokens, string fileName) {
 	vectorFile.close();
 }
 
-// Why can't I iterate over a const vector with an iterator?
 void CreateMapFromVector(const vector<string> &tokens, map<string, string> &wordMap) {
 	wordMap[""] = tokens.at(0);
 	string previousValue = tokens.at(0);
@@ -107,4 +109,13 @@ void OutputMapContents(const map<string, string> &wordMap, string fileName) {
 	}
 
 	mapFile.close();
+}
+
+void PrintCyclicalSermon(const map<string, string> &wordMap) {
+	string state = "";
+	for(int i = 0; i < 100; i++){
+	cout << wordMap.at(state) << " ";
+	state = wordMap.at(state);
+	}
+	cout << endl;
 }
