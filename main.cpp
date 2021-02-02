@@ -70,32 +70,41 @@ void ReadInputAsVector(vector<string> &tokens, string fileName) {
 }
 
 void OutputSetContents(const set<string> &unique, string fileName) {
-	ofstream outputFile(fileName + "_set.txt");
+	ofstream setFile(fileName + "_set.txt");
 
     for (set<string>::iterator it = unique.begin(); it != unique.end(); it++) {
-		outputFile << *it << "\n";
+		setFile << *it << "\n";
 	}
 
-	outputFile.close();
+	setFile.close();
 }
 
 void OutputVectorContents(const vector<string> &tokens, string fileName) {
-	ofstream outputFile(fileName + "_vector.txt");
+	ofstream vectorFile(fileName + "_vector.txt");
     for (string const& word : tokens) {
-		outputFile << word << "\n";
+		vectorFile << word << endl;
 	}
 
-	outputFile.close();
+	vectorFile.close();
 }
 
+// Why can't I iterate over a const vector with an iterator?
 void CreateMapFromVector(const vector<string> &tokens, map<string, string> &wordMap) {
 	wordMap[""] = tokens.at(0);
-    for (int i = 1; i < tokens.size() - 1; i++) {
-		wordMap[tokens.at(i)] = tokens.at(i+1);
+	string previousValue = tokens.at(0);
+	for (vector<string>::const_iterator it = tokens.begin(); it != tokens.end(); it++) {
+		wordMap[previousValue] = *it;
+		previousValue = *it;
 	}
 }
 
 void OutputMapContents(const map<string, string> &wordMap, string fileName) {
 	// Iterate through the map or cycle through the keys
-	for(map<string, string>::iterator it = wordMap.begin(); )
+	ofstream mapFile(fileName + "_map.txt");
+	string currentKey = "";
+	for (map<string, string>::const_iterator it = wordMap.begin(); it != wordMap.end(); it++) {
+		mapFile << it->first << ", " << it->second << endl;
+	}
+
+	mapFile.close();
 }
