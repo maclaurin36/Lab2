@@ -1,9 +1,14 @@
 #include <iostream>
 #include <set>
 #include <map>
+#include <list>
 #include <fstream>
 #include <sstream>
 #include <vector>
+
+// comment refresh please
+#define M 3
+#define SIZE 140
 
 using namespace std;
 void ReadInputAsSet(set<string> &unique, string fileName);
@@ -15,6 +20,8 @@ void OutputMapContents(const map<string, string> &wordMap, string fileName);
 void PrintCyclicalSermon(const map<string, string> &wordMap);
 void CreateVectorMap(map<string, vector<string>> &allFollowWords, const vector<string> &tokens);
 void PrintVectorSermon(map<string, vector<string>> &allFollowWords);
+void CreateContextMap(map<list<string>, vector<string>> &contextMap, const vector<string> &tokens);
+void PrintContextSermon(const map<list<string>, vector<string>> &contextMap);
 int main(int argc, char* argv[]) {
 	string fileName = argv[1];
 
@@ -34,8 +41,11 @@ int main(int argc, char* argv[]) {
 
 	map<string, vector<string>> allFollowWords;
 	CreateVectorMap(allFollowWords, tokens);
-	PrintVectorSermon(allFollowWords);
+	//PrintVectorSermon(allFollowWords);
 
+	map<list<string>, vector<string>> contextMap;
+	CreateContextMap(contextMap, tokens);
+	PrintContextSermon(contextMap);
 	return 0;
 }
 
@@ -149,6 +159,40 @@ void PrintVectorSermon(map<string, vector<string>> &allFollowWords) {
 		int ind = rand() % allFollowWords[state].size();
 		cout << allFollowWords.at(state).at(ind) << " ";
 		state = allFollowWords.at(state).at(ind);
+	}
+	cout << endl;
+}
+
+void CreateContextMap(map<list<string>, vector<string>> &contextMap, const vector<string> &tokens) {
+	list<string> state;
+	for (int i = 0; i < M; i++) {
+		state.push_back("");
+	}
+
+	for (vector<string>::const_iterator it=tokens.begin(); it!= tokens.end(); it++) {
+		contextMap[state].push_back(*it);
+		state.push_back(*it);
+		state.pop_front();
+	}
+}
+
+void PrintContextSermon(const map<list<string>, vector<string>> &contextMap) {
+	list<string> state;
+	state.clear();
+	for (int i = 0; i < M; i++) {
+		state.push_back("");
+	}
+	for (int i = 0; i < SIZE; i++) {
+		if(contextMap.at(state).size() == 0) {
+			state.clear();
+			for (int i = 0; i < M; i++) {
+				state.push_back("");
+			}
+		}
+		int ind = rand() % contextMap.at(state).size();
+		cout << contextMap.at(state)[ind]<<" ";
+		state.push_back(contextMap.at(state)[ind]);
+		state.pop_front();
 	}
 	cout << endl;
 }
