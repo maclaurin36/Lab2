@@ -13,6 +13,8 @@ void OutputVectorContents(const vector<string> &tokens, string fileName);
 void CreateMapFromVector(const vector<string> &tokens, map<string, string> &wordMap);
 void OutputMapContents(const map<string, string> &wordMap, string fileName);
 void PrintCyclicalSermon(const map<string, string> &wordMap);
+void CreateVectorMap(map<string, vector<string>> &allFollowWords, const vector<string> &tokens);
+void PrintVectorSermon(map<string, vector<string>> &allFollowWords);
 int main(int argc, char* argv[]) {
 	string fileName = argv[1];
 
@@ -28,7 +30,12 @@ int main(int argc, char* argv[]) {
 	CreateMapFromVector(tokens, wordMap);
 	OutputMapContents(wordMap, fileName);
 
-	PrintCyclicalSermon(wordMap);
+	//PrintCyclicalSermon(wordMap);
+
+	map<string, vector<string>> allFollowWords;
+	CreateVectorMap(allFollowWords, tokens);
+	PrintVectorSermon(allFollowWords);
+
 	return 0;
 }
 
@@ -116,6 +123,32 @@ void PrintCyclicalSermon(const map<string, string> &wordMap) {
 	for(int i = 0; i < 100; i++){
 	cout << wordMap.at(state) << " ";
 	state = wordMap.at(state);
+	}
+	cout << endl;
+}
+
+void CreateVectorMap(map<string, vector<string>> &allFollowWords, const vector<string> &tokens) {
+	string state = "";
+	for(vector<string>::const_iterator it=tokens.begin(); it !=tokens.end(); it++) {
+		allFollowWords[state].push_back(*it);
+		state = *it;
+	}
+
+	/*
+	for(vector<string>::iterator it = allFollowWords["Nephi"].begin(); it != allFollowWords["Nephi"].end(); it++) {
+		cout << *it << " ";
+	}
+	*/
+}
+
+void PrintVectorSermon(map<string, vector<string>> &allFollowWords) {
+	srand(time(NULL)); // this line initializes the random number generated
+                   // so you dont get the same thing every time
+	string state = "";
+	for (int i = 0; i < 100; i++) {
+		int ind = rand() % allFollowWords[state].size();
+		cout << allFollowWords.at(state).at(ind) << " ";
+		state = allFollowWords.at(state).at(ind);
 	}
 	cout << endl;
 }
